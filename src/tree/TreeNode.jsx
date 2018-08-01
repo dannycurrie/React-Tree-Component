@@ -7,14 +7,20 @@ const StyledTreeNode = styled.li`
   list-style-type: none;
 `;
 
-const TreeNode = ({ node, renderLeaf }) => {
+const TreeNode = ({ node, renderLeaf, toggle }) => {
+  const onClick = e => {
+    e.stopPropagation();
+    toggle(node);
+  };
+
   const renderChildren = () => (
     <ul>
       {node.children.map((child, index) => (
         <TreeNode
           key={child.id || index}
-          node={{ ...child, toggled: true }}
+          node={{ ...child }}
           renderLeaf={renderLeaf}
+          toggle={toggle}
         />
       ))}
     </ul>
@@ -25,7 +31,7 @@ const TreeNode = ({ node, renderLeaf }) => {
   );
 
   return (
-    <StyledTreeNode>
+    <StyledTreeNode onClick={onClick}>
       {renderLeaf(node)}
       {renderDrawer()}
     </StyledTreeNode>
@@ -38,7 +44,8 @@ TreeNode.propTypes = {
     children: PropTypes.arrayOf(PropTypes.object.isRequired),
     name: PropTypes.string
   }).isRequired,
-  renderLeaf: PropTypes.func.isRequired
+  renderLeaf: PropTypes.func.isRequired,
+  toggle: PropTypes.func.isRequired
 };
 
 export default TreeNode;
